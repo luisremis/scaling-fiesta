@@ -64,19 +64,33 @@ class Plotting(object):
                         xlabel="Database Size",
                         ylabel="None"):
 
-        if (len(db_sizes) * 2) != len(values[0,:]):
+        # print(len(values))
+        # print(len(values[1:]))
+        # print(values)
+        if (len(db_sizes) * 2) != len(values[1,:]):
             print("Error input size")
             print("db_sizes:", db_sizes)
             print("values:", values)
             return
 
-        if len(queries) * len(engines) != len(values[:,0]):
+        if len(queries) * len(engines) != len(values[:,1]):
             print("Error input size")
             print("queries:", queries)
             print("values:", values)
             return
 
         n_queries = len(queries)
+
+        # local_markers = []
+        # local_linesty = []
+        # local_color   = []
+
+        # aux = int(n_queries / len(engines))
+
+        # for i in range(len(engines)):
+        #     local_markers += [markers[i]    for j in range(aux)]
+        #     local_linesty += [linestyles[i] for j in range(aux)]
+        #     local_color   += [color[j]      for j in range(aux)]
 
         fig = plt.figure()
         plt.rc('lines', linewidth=1)
@@ -101,14 +115,24 @@ class Plotting(object):
             ax0.set_yscale('log')
         # ax0.set_ylim(1,10**4)
 
-        if len(x_pos) < 20:
-            plt.xticks(x_pos, db_sizes)
+        plt.xticks(x_pos, db_sizes)
 
         ax0.set_title(title)
         plt.xlabel(xlabel, fontsize=12)
         plt.ylabel(ylabel, fontsize=12)
 
-        plt.legend(loc="best", ncol=len(engines), shadow=True, fancybox=True)
+        if len(engines) > 2 or n_queries > 2:
+            plt.legend(bbox_to_anchor=(0, -0.15),
+                       loc="upper left",
+                       # mode="expand",
+                       borderaxespad=0,
+                       ncol=len(engines),
+                       fancybox=True,
+                       )
+        else:
+            plt.legend(loc="best",
+                       ncol=len(engines),
+                       shadow=True, fancybox=True)
 
         plt.savefig(filename, format="pdf", bbox_inches='tight')
         plt.close()
@@ -117,26 +141,25 @@ class Plotting(object):
                         log="y",
                         title="",
                         filename="plot_unnamed.pdf",
-                        xlabel="Database Size",
-                        ylabel="None"):
+                        xlabel="",
+                        ylabel=""):
 
-        n_queries = len(queries)
-
-        if (len(db_sizes) * 2) != len(values[0,:]):
+        # print(len(values))
+        # print(len(values[1:]))
+        # print(values)
+        if (len(db_sizes) * 2) != len(values[1,:]):
             print("Error input size")
             print("db_sizes:", db_sizes)
             print("values:", values)
             return
 
-        if n_queries * len(engines) != len(values[:,0]):
+        if len(queries) * len(engines) != len(values[:,1]):
             print("Error input size")
             print("queries:", queries)
             print("values:", values)
             return
 
-        if n_queries == 1:
-            print("Skipping mosaic: Single image to plot.")
-            return
+        n_queries = len(queries)
 
         local_markers = []
         local_linesty = []
@@ -171,7 +194,7 @@ class Plotting(object):
                              values[n_queries*j + i,0:len(db_sizes)],
                              yerr=values[n_queries*j + i,len(db_sizes):],
                              label=engines[j],
-                             color="black",
+                             color=color[j],
                              linestyle=linestyles[j % len(linestyles)],
                              marker=markers[j % len(markers)],
                              )
@@ -184,12 +207,14 @@ class Plotting(object):
 
             plt.xticks(x_pos, db_sizes, fontsize=10)
 
-            plt.legend(loc="best", ncol=1, shadow=True, fancybox=True)
+            if i == 0:
+                plt.legend(loc="best", ncol=1, shadow=True, fancybox=True)
 
             if i % side == 0:
                 plt.ylabel(ylabel, fontsize=12)
 
-            # plt.xlabel(xlabel, fontsize=12)
+            if i >= (n_queries - side):
+                plt.xlabel(xlabel, fontsize=12)
 
         plt.savefig(filename, format="pdf", bbox_inches='tight')
         plt.close()
@@ -198,7 +223,8 @@ class Plotting(object):
                   title="Generic (but Awesome) Bar Plot",
                   filename="plot_summary.pdf",
                   xlabel="Database Size",
-                  ylabel="Speedup ?"):
+                  ylabel="Speedup ?",
+                  log="none"):
 
         fig, ax0 = plt.subplots(nrows=1)
         fig.set_size_inches(12, 3)
@@ -231,18 +257,35 @@ class Plotting(object):
 
         ax0.set_title(title)
 
-        ax0.set_xticks(index)
+        ax0.set_xticks(index + (len(db_sizes) / 2 + 1) * bar_width)
         ax0.set_xticklabels(db_sizes, fontsize=10)
         ax0.tick_params(axis='y', labelsize=10)
 
-        ax0.set_ylim(0,30)
+        limit = values[:,0:len(db_sizes)].max() * 1.5
+
+        # ax0.set_ylim(0.1, limit)
 
         plt.ylabel('Speedup', fontsize=12)
 
+        if log == "x" or log == "both":
+            ax0.set_xscale('log')
+        if log == "y" or log == "both":
+            ax0.set_yscale('log')
+
         plt.axhline(y=1)
 
-        plt.legend(ncol=7, shadow=True, fancybox=True,
-                   fontsize=9.5, loc="upper left")
+        if len(queries) > 4:
+            plt.legend(bbox_to_anchor=(0, -0.15),
+                       loc="upper left",
+                       # mode="expand",
+                       borderaxespad=0,
+                       ncol=4,
+                       fancybox=True,
+                       fontsize=9.5,
+                       )
+        else:
+            plt.legend(ncol=7, shadow=True, fancybox=True,
+                       fontsize=9.5, loc="upper left")
 
         plt.savefig(filename, format="pdf", bbox_inches='tight')
         plt.close()
