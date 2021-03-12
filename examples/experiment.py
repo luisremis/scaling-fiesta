@@ -1,6 +1,6 @@
-from dbeval import EvalFramework
+from dbeval import EvalTool
 
-e = EvalFramework.EvalFramework("sample_experiment")
+e = EvalTool.EvalTool("sample_experiment")
 
 e.clear()
 

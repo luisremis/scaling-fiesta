@@ -8,7 +8,7 @@ import pandas as pd
 
 from . import Plotting
 
-class EvalFramework(object):
+class EvalTool(object):
 
     def __init__(self, experiment_name):
 
