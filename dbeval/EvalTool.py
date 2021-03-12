@@ -14,6 +14,16 @@ class EvalTool(object):
 
         self.experiment_name = experiment_name
 
+        # Plot params configurable by user
+
+        # Plot N Results
+        self.plot_n_res_scale  = "both"
+        self.plot_n_res_ylabel = "Number of Results"
+
+        # Plot Query times
+        self.plot_query_time_scale  = "both"
+        self.plot_query_time_ylabel = "Average Query Time(s)"
+
         try:
             self.data = pd.read_csv(experiment_name + ".csv", index_col=0)
         except:
@@ -159,11 +169,26 @@ class EvalTool(object):
 
         for i in threads:
 
-            self.plot_query_time(i)
-            self.plot_query_throughput(i)
-            self.plot_results_throughput(i, result_type="Images")
-            self.plot_query_time_speedup(i)
-            self.plot_n_results(i)
+            try:
+                self.plot_query_time(i)
+            except:
+                print("Error plotting:", "plot_query_time")
+            try:
+                self.plot_query_throughput(i)
+            except:
+                print("Error plotting:", "plot_query_throughput")
+            try:
+                self.plot_results_throughput(i, result_type="Images")
+            except:
+                print("Error plotting:", "plot_results_throughput")
+            try:
+                self.plot_query_time_speedup(i)
+            except:
+                print("Error plotting:", "plot_query_time_speedup")
+            try:
+                self.plot_n_results(i)
+            except:
+                print("Error plotting:", "plot_n_results")
 
     def plot_results_throughput_parallelism_threads(self, q,
                                             result_type="results"):
@@ -472,20 +497,22 @@ class EvalTool(object):
         filename += "plot_th_" + str(n_threads) + "_query_times.pdf"
 
         title = "Query Execution Time(s) Summary"
-        p.plot_lines_all(queries, db_sizes, engines, values, log="both",
+        p.plot_lines_all(queries, db_sizes, engines, values,
+                          log=self.plot_query_time_scale,
                           title=title,
                           filename=filename,
-                          ylabel="Average Query Time(s)")
+                          ylabel=self.plot_query_time_ylabel)
 
         filename  = self.plot_folder
         filename += "plot_th_" + str(n_threads) + "_mosaic_query_times.pdf"
 
         # title = "Query Execution Time(s) for different queries"
-        p.plot_lines_all_mosaic(queries, db_sizes, engines, values, log="both",
+        p.plot_lines_all_mosaic(queries, db_sizes, engines, values,
+                          log=self.plot_query_time_scale,
                           # title=title,
                           filename=filename,
                           xlabel="Database Size",
-                          ylabel="Average Query Time(s)")
+                          ylabel=self.plot_query_time_ylabel)
 
         return
 
@@ -517,20 +544,22 @@ class EvalTool(object):
         filename += "plot_th_" + str(n_threads) + "_n_results.pdf"
 
         title = "Returned Results Summary"
-        p.plot_lines_all(queries, db_sizes, engines, values, log="both",
+        p.plot_lines_all(queries, db_sizes, engines, values,
+                          log=self.plot_n_res_scale,
                           title=title,
                           filename=filename,
-                          ylabel="Number of Results")
+                          ylabel=self.plot_n_res_ylabel)
 
         filename  = self.plot_folder
         filename += "plot_th_" + str(n_threads) + "_mosaic_n_results.pdf"
 
         title = "Returned Results for different queries"
-        p.plot_lines_all_mosaic(queries, db_sizes, engines, values, log="x",
+        p.plot_lines_all_mosaic(queries, db_sizes, engines, values,
+                          log=self.plot_n_res_scale,
                           title=title,
                           filename=filename,
                           xlabel="Database Size",
-                          ylabel="Number of Results")
+                          ylabel=self.plot_n_res_ylabel)
 
         return
 
