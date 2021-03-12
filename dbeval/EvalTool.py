@@ -24,6 +24,13 @@ class EvalTool(object):
         self.plot_query_time_scale  = "both"
         self.plot_query_time_ylabel = "Average Query Time(s)"
 
+        # Plot Query Throughput
+        self.plot_query_throughput_scale  = "both"
+        self.plot_query_throughput_ylabel = "Queries per second"
+
+        # Plot Results Throughput
+        self.plot_n_res_throughput_scale  = "both"
+
         try:
             self.data = pd.read_csv(experiment_name + ".csv", index_col=0)
         except:
@@ -406,7 +413,8 @@ class EvalTool(object):
         filename += "plot_th_" + str(n_threads) + "_results_throughput.pdf"
 
         title = "Throughput as " + result_type + " per second - Summary"
-        p.plot_lines_all(queries, db_sizes, engines, values, log="both",
+        p.plot_lines_all(queries, db_sizes, engines, values,
+                          log=self.plot_n_res_throughput_scale,
                           title=title,
                           filename=filename,
                           ylabel=result_type + "/s")
@@ -415,7 +423,8 @@ class EvalTool(object):
         filename += "plot_th_" + str(n_threads) + "_mosaic_results_throughput.pdf"
 
         # title = "Throughput for different queries"
-        p.plot_lines_all_mosaic(queries, db_sizes, engines, values, log="both",
+        p.plot_lines_all_mosaic(queries, db_sizes, engines, values,
+                          log=self.plot_n_res_throughput_scale,
                           # title=title,
                           filename=filename,
                           xlabel="Database Size",
@@ -454,20 +463,22 @@ class EvalTool(object):
         filename += "plot_th_" + str(n_threads) + "_queries_throughput.pdf"
 
         title = "Query Throughput (q/s) Summary"
-        p.plot_lines_all(queries, db_sizes, engines, values, log="both",
+        p.plot_lines_all(queries, db_sizes, engines, values,
+                          log=self.plot_query_throughput_scale,
                           title=title,
                           filename=filename,
-                          ylabel="Queries per second")
+                          ylabel=self.plot_query_throughput_ylabel)
 
         filename  = self.plot_folder
         filename += "plot_th_" + str(n_threads) + "_mosaic_query_throughput.pdf"
 
         # title = "Query Throughput (q/s) for different queries"
-        p.plot_lines_all_mosaic(queries, db_sizes, engines, values, log="both",
+        p.plot_lines_all_mosaic(queries, db_sizes, engines, values,
+                          log=self.plot_query_throughput_scale,
                           # title=title,
                           filename=filename,
                           xlabel="Database Size",
-                          ylabel="Queries per second")
+                          ylabel=self.plot_query_throughput_ylabel)
 
 
     def plot_query_time(self, n_threads):
