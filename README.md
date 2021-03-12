@@ -1,2 +1,3 @@
 # scaling-fiesta
-Performance Evaluation Framework for Databases
+
+Database Performance and Scalability Evaluation Helpers
