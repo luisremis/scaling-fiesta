@@ -6,7 +6,7 @@ from numpy import nan
 
 import pandas as pd
 
-from DBEvalFramework import Plotting
+from . import Plotting
 
 class EvalFramework(object):
 
