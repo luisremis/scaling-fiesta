@@ -67,7 +67,7 @@ class Plotting(object):
         # print(len(values))
         # print(len(values[1:]))
         # print(values)
-        if (len(db_sizes) * 2) != len(values[1,:]):
+        if (len(db_sizes) * 2) != len(values[0,:]):
             print("Error input size")
             print("db_sizes:", db_sizes)
             print("values:", values)
@@ -147,7 +147,7 @@ class Plotting(object):
         # print(len(values))
         # print(len(values[1:]))
         # print(values)
-        if (len(db_sizes) * 2) != len(values[1,:]):
+        if (len(db_sizes) * 2) != len(values[0,:]):
             print("Error input size")
             print("db_sizes:", db_sizes)
             print("values:", values)
