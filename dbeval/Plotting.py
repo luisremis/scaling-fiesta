@@ -62,7 +62,8 @@ class Plotting(object):
                         title="Query Time",
                         filename="plot_unnamed.pdf",
                         xlabel="Database Size",
-                        ylabel="None"):
+                        ylabel="None",
+                        xticks=True):
 
         # print(len(values))
         # print(len(values[1:]))
@@ -115,7 +116,8 @@ class Plotting(object):
             ax0.set_yscale('log')
         # ax0.set_ylim(1,10**4)
 
-        plt.xticks(x_pos, db_sizes)
+        if xticks:
+            plt.xticks(x_pos, db_sizes)
 
         ax0.set_title(title)
         plt.xlabel(xlabel, fontsize=12)
@@ -142,7 +144,8 @@ class Plotting(object):
                         title="",
                         filename="plot_unnamed.pdf",
                         xlabel="",
-                        ylabel=""):
+                        ylabel="",
+                        xticks=True):
 
         # print(len(values))
         # print(len(values[1:]))
@@ -205,7 +208,8 @@ class Plotting(object):
                 ax0.set_yscale('log')
             # ax0.set_ylim(1,10**4)
 
-            plt.xticks(x_pos, db_sizes, fontsize=10)
+            if xticks:
+                plt.xticks(x_pos, db_sizes, fontsize=10)
 
             if i == 0:
                 plt.legend(loc="best", ncol=1, shadow=True, fancybox=True)
@@ -256,9 +260,9 @@ class Plotting(object):
                     label=queries[i])
 
         ax0.set_title(title)
-
         ax0.set_xticks(index + (len(db_sizes) / 2 + 1) * bar_width)
         ax0.set_xticklabels(db_sizes, fontsize=10)
+
         ax0.tick_params(axis='y', labelsize=10)
 
         limit = values[:,0:len(db_sizes)].max() * 1.5

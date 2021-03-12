@@ -19,17 +19,21 @@ class EvalTool(object):
         # Plot N Results
         self.plot_n_res_scale  = "both"
         self.plot_n_res_ylabel = "Number of Results"
+        self.plot_n_res_xticks = True
 
         # Plot Query times
         self.plot_query_time_scale  = "both"
         self.plot_query_time_ylabel = "Average Query Time(s)"
+        self.plot_query_time_xticks = True
 
         # Plot Query Throughput
         self.plot_query_throughput_scale  = "both"
         self.plot_query_throughput_ylabel = "Queries per second"
+        self.plot_query_throughput_xticks = True
 
         # Plot Results Throughput
         self.plot_n_res_throughput_scale  = "both"
+        self.plot_n_res_throughput_xticks = True
 
         try:
             self.data = pd.read_csv(experiment_name + ".csv", index_col=0)
@@ -44,6 +48,26 @@ class EvalTool(object):
                     ])
 
         self.export_to_csv()
+
+    def set_log_scale_for_x_only(self):
+
+        self.plot_n_res_scale             = "x"
+        self.plot_query_time_scale        = "x"
+        self.plot_query_throughput_scale  = "x"
+        self.plot_n_res_throughput_scale  = "x"
+
+    def set_log_scale_for_y_only(self):
+
+        self.plot_n_res_scale             = "y"
+        self.plot_query_time_scale        = "y"
+        self.plot_query_throughput_scale  = "y"
+        self.plot_n_res_throughput_scale  = "y"
+
+    def set_xticks(self, val=True):
+        self.plot_n_res_xticks            = val
+        self.plot_query_time_xticks       = val
+        self.plot_query_throughput_xticks = val
+        self.plot_n_res_throughput_xticks = val
 
     def add_row(self, query, engine, db_size,
             n_threads,
@@ -417,7 +441,8 @@ class EvalTool(object):
                           log=self.plot_n_res_throughput_scale,
                           title=title,
                           filename=filename,
-                          ylabel=result_type + "/s")
+                          ylabel=result_type + "/s",
+                          xticks=self.plot_n_res_throughput_xticks)
 
         filename  = self.plot_folder
         filename += "plot_th_" + str(n_threads) + "_mosaic_results_throughput.pdf"
@@ -428,7 +453,8 @@ class EvalTool(object):
                           # title=title,
                           filename=filename,
                           xlabel="Database Size",
-                          ylabel=result_type + "/s")
+                          ylabel=result_type + "/s",
+                          xticks=self.plot_n_res_throughput_xticks)
 
 
     def plot_query_throughput(self, n_threads):
@@ -467,7 +493,8 @@ class EvalTool(object):
                           log=self.plot_query_throughput_scale,
                           title=title,
                           filename=filename,
-                          ylabel=self.plot_query_throughput_ylabel)
+                          ylabel=self.plot_query_throughput_ylabel,
+                          xticks=self.plot_query_throughput_xticks)
 
         filename  = self.plot_folder
         filename += "plot_th_" + str(n_threads) + "_mosaic_query_throughput.pdf"
@@ -478,7 +505,9 @@ class EvalTool(object):
                           # title=title,
                           filename=filename,
                           xlabel="Database Size",
-                          ylabel=self.plot_query_throughput_ylabel)
+                          ylabel=self.plot_query_throughput_ylabel,
+                          xticks=self.plot_query_throughput_xticks
+                          )
 
 
     def plot_query_time(self, n_threads):
@@ -512,7 +541,8 @@ class EvalTool(object):
                           log=self.plot_query_time_scale,
                           title=title,
                           filename=filename,
-                          ylabel=self.plot_query_time_ylabel)
+                          ylabel=self.plot_query_time_ylabel,
+                          xticks=self.plot_query_time_xticks)
 
         filename  = self.plot_folder
         filename += "plot_th_" + str(n_threads) + "_mosaic_query_times.pdf"
@@ -523,7 +553,8 @@ class EvalTool(object):
                           # title=title,
                           filename=filename,
                           xlabel="Database Size",
-                          ylabel=self.plot_query_time_ylabel)
+                          ylabel=self.plot_query_time_ylabel,
+                          xticks=self.plot_query_time_xticks)
 
         return
 
@@ -559,7 +590,8 @@ class EvalTool(object):
                           log=self.plot_n_res_scale,
                           title=title,
                           filename=filename,
-                          ylabel=self.plot_n_res_ylabel)
+                          ylabel=self.plot_n_res_ylabel,
+                          xticks=self.plot_n_res_xticks)
 
         filename  = self.plot_folder
         filename += "plot_th_" + str(n_threads) + "_mosaic_n_results.pdf"
@@ -570,7 +602,8 @@ class EvalTool(object):
                           title=title,
                           filename=filename,
                           xlabel="Database Size",
-                          ylabel=self.plot_n_res_ylabel)
+                          ylabel=self.plot_n_res_ylabel,
+                          xticks=self.plot_n_res_xticks)
 
         return
 
