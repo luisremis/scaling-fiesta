@@ -49,6 +49,13 @@ class EvalTool(object):
 
         self.export_to_csv()
 
+    def set_log_scale(self, val):
+
+        self.plot_n_res_scale             = val
+        self.plot_query_time_scale        = val
+        self.plot_query_throughput_scale  = val
+        self.plot_n_res_throughput_scale  = val
+
     def set_log_scale_for_x_only(self):
 
         self.plot_n_res_scale             = "x"
