@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="dbeval",
-    version="0.0.1",
+    version="0.0.2",
     author="Luis Remis",
     author_email="luis@remis.io",
     description="Database Performance and Scalability Evaluation Helpers",
