@@ -47,7 +47,63 @@ class EvalTool(object):
                     "n_results", "n_results_std",
                     ])
 
-        self.export_to_csv()
+            self.export_to_csv()
+
+    def pre_process_db_sizes(self, new_db_sizes_number):
+
+        self.data = pd.read_csv(experiment_name + "_processed.csv", index_col=0)
+
+        db_sizes = self.get_unique("db_size")
+
+        max_value  = self.data["db_size"].max()
+        range_size = int(max_value / new_db_sizes_number)
+
+        threads  = self.get_unique("n_threads")
+        queries  = self.get_unique("query")
+        engines  = self.get_unique("engine")
+
+        for eng in engines:
+            for th in threads:
+                for q in queries:
+
+                db_sizes  = self.get_arr_for_eng_q_threads(eng, q, th,
+                                                            "db_sizes")
+
+                samples   = self.get_arr_for_eng_q_threads(eng, q, th,
+                                                            "n_samples")
+
+                times     = self.get_arr_for_eng_q_threads(eng, q, th,
+                                                            "query_time_avg")
+                n_results = self.get_arr_for_eng_q_threads(eng, q, th,
+                                                            "n_results")
+
+                times_arr = []
+                n_results_arr = []
+                range_end  = range_size
+                for (size,i) in zip(db_sizes, range(db_sizes)):
+
+                    if size < range_end:
+                        times_arr.append(times[i])
+                        n_results_arr.append(n_results[i])
+
+                    else:
+                        new_time     = np.mean(times_arr)
+                        new_time_std = np.std(times_arr)
+
+                        new_n_results     = np.mean(n_results_arr)
+                        new_n_results_std = np.std(n_results_arr)
+
+                        self.add_row(q, eng, range_end, th, n_samples[0],
+                                     new_time, new_time_std,
+                                     new_n_results, new_n_results_std)
+
+                        times_arr = []
+                        n_results_arr = []
+                        times_arr.append(times[i])
+                        n_results_arr.append(n_results[i])
+
+                        range_end += range_size
+
 
     def set_log_scale(self, val):
 
