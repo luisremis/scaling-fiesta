@@ -49,14 +49,42 @@ class EvalTool(object):
 
             self.export_to_csv()
 
-    def pre_process_db_sizes(self, new_db_sizes_number):
+    # This method will make sure only the common set of db_sizes are present.
+    def cleanup_db_sizes(self):
 
-        self.data = pd.read_csv(experiment_name + "_processed.csv", index_col=0)
+        threads  = self.get_unique("n_threads")
+        queries  = self.get_unique("query")
+        engines  = self.get_unique("engine")
 
-        db_sizes = self.get_unique("db_size")
+        new_max = None
+        new_min = None
+        for eng in engines:
+            for th in threads:
+                for q in queries:
+                    db_sizes  = self.get_arr_for_eng_q_threads(eng, q, th,
+                                                                "db_size")
+                    largest  = db_sizes[-1]
+                    if new_max is None:
+                        new_max = largest
+                    else:
+                        if largest < new_max:
+                            new_max = largest
 
-        max_value  = self.data["db_size"].max()
-        range_size = int(max_value / new_db_sizes_number)
+                    smallest = db_sizes[0]
+                    if new_min is None:
+                        new_min = smallest
+                    else:
+                        if smallest > new_min:
+                            new_min = smallest
+
+        self.data = self.data[self.data.db_size <= new_max]
+        self.data = self.data[self.data.db_size >= new_min]
+
+    # This method will subsumple db_sizes, using the specified range_size
+    def pre_process_db_sizes(self, range_size=0):
+
+        self.new_ev = EvalTool(self.experiment_name + "_processed")
+        self.new_ev.clear()
 
         threads  = self.get_unique("n_threads")
         queries  = self.get_unique("query")
@@ -66,44 +94,67 @@ class EvalTool(object):
             for th in threads:
                 for q in queries:
 
-                db_sizes  = self.get_arr_for_eng_q_threads(eng, q, th,
-                                                            "db_sizes")
+                    db_sizes  = self.get_arr_for_eng_q_threads(eng, q, th,
+                                                                "db_size")
+                    samples   = self.get_arr_for_eng_q_threads(eng, q, th,
+                                                                "n_samples")
+                    times     = self.get_arr_for_eng_q_threads(eng, q, th,
+                                                                "query_time_avg")
+                    n_results = self.get_arr_for_eng_q_threads(eng, q, th,
+                                                                "n_results")
 
-                samples   = self.get_arr_for_eng_q_threads(eng, q, th,
-                                                            "n_samples")
+                    times_arr = []
+                    n_results_arr = []
+                    range_end  = range_size
 
-                times     = self.get_arr_for_eng_q_threads(eng, q, th,
-                                                            "query_time_avg")
-                n_results = self.get_arr_for_eng_q_threads(eng, q, th,
-                                                            "n_results")
+                    for (size,i) in zip(db_sizes, range(len(db_sizes))):
 
-                times_arr = []
-                n_results_arr = []
-                range_end  = range_size
-                for (size,i) in zip(db_sizes, range(db_sizes)):
+                        if size < range_end:
+                            times_arr.append(times[i])
+                            n_results_arr.append(n_results[i])
 
-                    if size < range_end:
-                        times_arr.append(times[i])
-                        n_results_arr.append(n_results[i])
+                        else:
+                            new_time     = np.mean(times_arr)
+                            new_time_std = np.std(times_arr)
 
-                    else:
+                            new_n_results     = np.mean(n_results_arr)
+                            new_n_results_std = np.std(n_results_arr)
+
+                            self.new_ev.add_row(q, eng, range_end, th, samples[0],
+                                         new_time, new_time_std,
+                                         new_n_results, new_n_results_std)
+
+                            times_arr = []
+                            n_results_arr = []
+
+                            times_arr.append(times[i])
+                            n_results_arr.append(n_results[i])
+
+                            range_end += range_size
+
+                    if len(times_arr) > 0:
+
                         new_time     = np.mean(times_arr)
                         new_time_std = np.std(times_arr)
 
                         new_n_results     = np.mean(n_results_arr)
                         new_n_results_std = np.std(n_results_arr)
 
-                        self.add_row(q, eng, range_end, th, n_samples[0],
+                        self.new_ev.add_row(q, eng, range_end, th, samples[0],
                                      new_time, new_time_std,
                                      new_n_results, new_n_results_std)
 
                         times_arr = []
                         n_results_arr = []
+
                         times_arr.append(times[i])
                         n_results_arr.append(n_results[i])
 
                         range_end += range_size
 
+        self.new_ev.cleanup_db_sizes()
+        self.new_ev.export_to_csv()
+        self.data = pd.read_csv(self.experiment_name + "_processed.csv", index_col=0)
 
     def set_log_scale(self, val):
 
@@ -212,7 +263,6 @@ class EvalTool(object):
         if not os.path.exists(self.plot_folder):
             os.makedirs(self.plot_folder)
 
-        # print(self.data)
         self.plot_all_for_db_size()
         self.plot_all_for_n_clients()
         self.plot_all_for_all_queries()
@@ -634,7 +684,7 @@ class EvalTool(object):
         for eng in engines:
             for q in queries:
 
-                n_res = self.get_arr_for_eng_q_threads(eng,q, n_threads,
+                n_res = self.get_arr_for_eng_q_threads(eng, q, n_threads,
                                                             "n_results")
                 stds  = self.get_arr_for_eng_q_threads(eng, q, n_threads,
                                                             "n_results_std")
