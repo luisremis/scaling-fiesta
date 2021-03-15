@@ -49,6 +49,43 @@ class EvalTool(object):
 
             self.export_to_csv()
 
+    def subsample_db_sizes(self, decimation=10):
+
+        self.new_ev = EvalTool(self.experiment_name + "_subsampled")
+        self.new_ev.clear()
+
+        threads  = self.get_unique("n_threads")
+        queries  = self.get_unique("query")
+        engines  = self.get_unique("engine")
+
+        new_max = None
+        new_min = None
+        for eng in engines:
+            for th in threads:
+                for q in queries:
+
+                    db_sizes  = self.get_arr_for_eng_q_threads(eng, q, th,
+                                                                "db_size")
+                    samples   = self.get_arr_for_eng_q_threads(eng, q, th,
+                                                                "n_samples")
+                    times     = self.get_arr_for_eng_q_threads(eng, q, th,
+                                                                "query_time_avg")
+                    times_std = self.get_arr_for_eng_q_threads(eng, q, th,
+                                                                "query_time_std")
+                    n_results = self.get_arr_for_eng_q_threads(eng, q, th,
+                                                                "n_results")
+                    n_results_std = self.get_arr_for_eng_q_threads(eng, q, th,
+                                                                "n_results_std")
+
+                    for i in range(0,len(db_sizes),decimation):
+
+                        self.new_ev.add_row(q, eng, db_sizes[i], th, samples[0],
+                                     times[i], times_std[i],
+                                     n_results[i], n_results_std[i])
+
+        self.new_ev.export_to_csv()
+        self.data = pd.read_csv(self.experiment_name + "_subsampled.csv", index_col=0)
+
     # This method will make sure only the common set of db_sizes are present.
     def cleanup_db_sizes(self):
 
