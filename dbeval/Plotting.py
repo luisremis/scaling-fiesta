@@ -65,9 +65,6 @@ class Plotting(object):
                         ylabel="None",
                         xticks=True):
 
-        # print(len(values))
-        # print(len(values[1:]))
-        # print(values)
         if (len(db_sizes) * 2) != len(values[0,:]):
             print("Error input size")
             print("db_sizes:", db_sizes)
@@ -102,8 +99,8 @@ class Plotting(object):
         for j in range(len(engines)):
             for i in range(n_queries):
                 ax0.errorbar(x_pos,
-                             values[j*len(engines) + i,0:len(db_sizes)],
-                             yerr=values[j*len(engines) + i,len(db_sizes):],
+                             values[j*n_queries + i,0:len(db_sizes)],
+                             yerr=values[j*n_queries + i,len(db_sizes):],
                              label=engines[j] + "_" + queries[i],
                              color=color[i],
                              linestyle=linestyles[j],
@@ -147,9 +144,6 @@ class Plotting(object):
                         ylabel="",
                         xticks=True):
 
-        # print(len(values))
-        # print(len(values[1:]))
-        # print(values)
         if (len(db_sizes) * 2) != len(values[0,:]):
             print("Error input size")
             print("db_sizes:", db_sizes)
