@@ -336,6 +336,7 @@ class EvalTool(object):
 
         for i in queries:
             self.plot_results_throughput_parallelism_dbsizes(i, result_type="Images")
+            self.plot_results_n_results_parallelism_dbsizes(i)
 
     def plot_all_for_db_size(self):
 
@@ -491,6 +492,54 @@ class EvalTool(object):
                           xlabel="# of concurrent clients",
                           ylabel=result_type + "/s")
 
+    def plot_results_n_results_parallelism_dbsizes(self, q):
+
+        # Plot query times:
+        threads  = self.get_unique("n_threads")
+        queries  = self.get_unique("query")
+        engines  = self.get_unique("engine")
+        db_sizes = self.get_unique("db_size")
+
+        # Todo make general for more db_sizes
+        values = np.zeros(len(threads) * 2)
+
+        for eng in engines:
+            for db_size in db_sizes:
+
+                n_results = self.get_arr_for_eng_q_dbsize(eng, q, db_size,
+                                                            "n_results")
+                n_results_std = self.get_arr_for_eng_q_dbsize(eng, q, db_size,
+                                                            "n_results_std")
+
+                values = np.vstack((values, np.append(n_results, n_results_std)))
+
+        values = values[1:,:] # remove initial row of zeros
+
+        p = Plotting.Plotting()
+
+        filename  = self.plot_folder + "plot_conc_q_"
+        filename += str(q) + "_n_results_db_size.pdf"
+
+        title = "Number of results - Summary"
+        p.plot_lines_all(db_sizes, threads, engines, values,
+                          log="none",
+                          title=title,
+                          filename=filename,
+                          ylabel="Failure Rate (%)",
+                          xlabel="# of concurrent clients",
+                          )
+
+        filename  = self.plot_folder + "plot_conc_q_"
+        filename += str(q) + "_mosaic_n_results_db_size.pdf"
+
+        # title = "Throughput for " + q
+        # title += " as number of concurrent clients increases"
+        p.plot_lines_all_mosaic(db_sizes, threads, engines, values,
+                          log="none",
+                          filename=filename,
+                          # title=title,
+                          ylabel="Failure Rate (%)",
+                          xlabel="# of concurrent clients")
 
     def plot_results_throughput_parallelism_queries(self, db_size,
                                             result_type="results"):

@@ -101,7 +101,7 @@ class Plotting(object):
                 ax0.errorbar(x_pos,
                              values[j*n_queries + i,0:len(db_sizes)],
                              yerr=values[j*n_queries + i,len(db_sizes):],
-                             label=engines[j] + "_" + queries[i],
+                             label=str(engines[j]) + "_" + str(queries[i]),
                              color=color[i],
                              linestyle=linestyles[j],
                              marker=markers[j],
