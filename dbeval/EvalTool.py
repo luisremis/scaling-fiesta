@@ -35,8 +35,12 @@ class EvalTool(object):
         self.plot_n_res_throughput_scale  = "both"
         self.plot_n_res_throughput_xticks = True
 
+        # Plot Speedup
+        self.plot_speedup_scale  = "none"
+        self.plot_speedup_xticks = True
+
         try:
-            self.data = pd.read_csv(experiment_name + ".csv", index_col=0)
+            self.data = pd.read_csv(experiment_name + ".csv")
         except:
             print("File not found, creating a new onself...")
             self.data = pd.DataFrame(columns=[
@@ -84,7 +88,7 @@ class EvalTool(object):
                                      n_results[i], n_results_std[i])
 
         self.new_ev.export_to_csv()
-        self.data = pd.read_csv(self.experiment_name + "_subsampled.csv", index_col=0)
+        self.data = pd.read_csv(self.experiment_name + "_subsampled.csv")
 
     # This method will make sure only the common set of db_sizes are present.
     def cleanup_db_sizes(self):
@@ -252,7 +256,7 @@ class EvalTool(object):
 
     def export_to_csv(self):
 
-        self.data.to_csv(self.experiment_name + ".csv")
+        self.data.to_csv(self.experiment_name + ".csv", index=False)
 
     def get_unique(self, column):
 
@@ -861,6 +865,6 @@ class EvalTool(object):
             p.plot_bars(queries, db_sizes, values,
                         filename=filename,
                         title=title,
-                        log="y")
+                        log=self.plot_speedup_scale)
 
         return
