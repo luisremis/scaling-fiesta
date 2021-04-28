@@ -53,6 +53,11 @@ class EvalTool(object):
 
             self.export_to_csv()
 
+    def remove_n_threads(self, th_arr=[]):
+
+        for th in th_arr:
+            self.data = self.data[self.data.n_threads != th]
+
     def subsample_db_sizes(self, decimation=10):
 
         self.new_ev = EvalTool(self.experiment_name + "_subsampled")
