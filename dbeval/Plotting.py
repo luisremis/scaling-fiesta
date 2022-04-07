@@ -102,9 +102,9 @@ class Plotting(object):
                              values[j*n_queries + i,0:len(db_sizes)],
                              yerr=values[j*n_queries + i,len(db_sizes):],
                              label=str(engines[j]) + "_" + str(queries[i]),
-                             color=color[i],
-                             linestyle=linestyles[j],
-                             marker=markers[j],
+                             color=color[i%len(color)],
+                             linestyle=linestyles[j%len(linestyles)],
+                             marker=markers[j%len(markers)],
                              )
 
         if log == "x" or log == "both":
@@ -158,17 +158,6 @@ class Plotting(object):
 
         n_queries = len(queries)
 
-        local_markers = []
-        local_linesty = []
-        local_color   = []
-
-        aux = int(n_queries / len(engines))
-
-        for i in range(len(engines)):
-            local_markers += [markers[i]    for j in range(aux)]
-            local_linesty += [linestyles[i] for j in range(aux)]
-            local_color   += [color[j]      for j in range(aux)]
-
         import math
         side = math.ceil(math.sqrt(n_queries))
 
@@ -191,7 +180,7 @@ class Plotting(object):
                              values[n_queries*j + i,0:len(db_sizes)],
                              yerr=values[n_queries*j + i,len(db_sizes):],
                              label=engines[j],
-                             color=color[j],
+                             color=color[j % len(color)],
                              linestyle=linestyles[j % len(linestyles)],
                              marker=markers[j % len(markers)],
                              )

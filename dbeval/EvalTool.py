@@ -534,7 +534,7 @@ class EvalTool(object):
                           log="none",
                           title=title,
                           filename=filename,
-                          ylabel="Failure Rate (%)",
+                          ylabel=self.plot_n_res_ylabel,
                           xlabel="# of concurrent clients",
                           )
 
@@ -547,7 +547,7 @@ class EvalTool(object):
                           log="none",
                           filename=filename,
                           # title=title,
-                          ylabel="Failure Rate (%)",
+                          ylabel=self.plot_n_res_ylabel,
                           xlabel="# of concurrent clients")
 
     def plot_results_throughput_parallelism_queries(self, db_size,
