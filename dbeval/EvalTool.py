@@ -39,6 +39,10 @@ class EvalTool(object):
         self.plot_speedup_scale  = "none"
         self.plot_speedup_xticks = True
 
+        self.format = "png"
+
+        self.result_type = "Objects"
+
         try:
             self.data = pd.read_csv(experiment_name + ".csv")
         except:
@@ -324,7 +328,7 @@ class EvalTool(object):
         print("Plotting plot_all_for_all_queries...")
 
         for q in queries:
-            self.plot_results_throughput_parallelism_threads(q, result_type="Images")
+            self.plot_results_throughput_parallelism_threads(q, result_type=self.result_type)
 
 
     def plot_all_for_n_clients(self):
@@ -341,10 +345,10 @@ class EvalTool(object):
 
         for i in db_sizes:
 
-            self.plot_results_throughput_parallelism_queries(i, result_type="Images")
+            self.plot_results_throughput_parallelism_queries(i, result_type=self.result_type)
 
         for i in queries:
-            self.plot_results_throughput_parallelism_dbsizes(i, result_type="Images")
+            self.plot_results_throughput_parallelism_dbsizes(i, result_type=self.result_type)
             self.plot_results_n_results_parallelism_dbsizes(i)
 
     def plot_all_for_db_size(self):
@@ -369,7 +373,7 @@ class EvalTool(object):
             except:
                 print("Error plotting:", "plot_query_throughput")
             try:
-                self.plot_results_throughput(i, result_type="Images")
+                self.plot_results_throughput(i, result_type=self.result_type)
             except:
                 print("Error plotting:", "plot_results_throughput")
             try:
@@ -389,6 +393,9 @@ class EvalTool(object):
         queries  = self.get_unique("query")
         engines  = self.get_unique("engine")
         db_sizes = self.get_unique("db_size")
+
+        if len(db_sizes) == 1:
+            return
 
         # Todo make general for more db_sizes
         values = np.zeros(len(db_sizes) * 2)
@@ -419,7 +426,7 @@ class EvalTool(object):
         p = Plotting.Plotting()
 
         # filename  = self.plot_folder + "plot_conc_q_"
-        # filename += str(q) + "_results_throughput_threads.pdf"
+        # filename += str(q) + "_results_throughput_threads." + self.format
 
         # title = "Throughput as " + result_type + " per second Summary"
         # p.plot_lines_all(str(threads), db_sizes, engines, values,
@@ -430,7 +437,7 @@ class EvalTool(object):
         #                   ylabel=result_type + "/s")
 
         filename  = self.plot_folder + "plot_q_"
-        filename += str(q) + "_mosaic_results_throughput_threads.pdf"
+        filename += str(q) + "_mosaic_results_throughput_threads." + self.format
 
         threads = ["clients: " + str(a) for a in threads]
         # title = "Throughput for " + q
@@ -481,7 +488,7 @@ class EvalTool(object):
         p = Plotting.Plotting()
 
         filename  = self.plot_folder + "plot_conc_q_"
-        filename += str(q) + "_results_throughput_db_size.pdf"
+        filename += str(q) + "_results_throughput_db_size." + self.format
 
         title = "Throughput as " + result_type + " per second - Summary"
         p.plot_lines_all(db_sizes, threads, engines, values,
@@ -491,7 +498,7 @@ class EvalTool(object):
                           ylabel=result_type + "/s")
 
         filename  = self.plot_folder + "plot_conc_q_"
-        filename += str(q) + "_mosaic_results_throughput_db_size.pdf"
+        filename += str(q) + "_mosaic_results_throughput_db_size." + self.format
 
         # title = "Throughput for " + q
         # title += " as number of concurrent clients increases"
@@ -527,7 +534,7 @@ class EvalTool(object):
         p = Plotting.Plotting()
 
         filename  = self.plot_folder + "plot_conc_q_"
-        filename += str(q) + "_n_results_db_size.pdf"
+        filename += str(q) + "_n_results_db_size." + self.format
 
         title = "Number of results - Summary"
         p.plot_lines_all(db_sizes, threads, engines, values,
@@ -539,7 +546,7 @@ class EvalTool(object):
                           )
 
         filename  = self.plot_folder + "plot_conc_q_"
-        filename += str(q) + "_mosaic_n_results_db_size.pdf"
+        filename += str(q) + "_mosaic_n_results_db_size." + self.format
 
         # title = "Throughput for " + q
         # title += " as number of concurrent clients increases"
@@ -588,7 +595,7 @@ class EvalTool(object):
         p = Plotting.Plotting()
 
         filename  = self.plot_folder + "plot_conc_dbsize_"
-        filename += str(db_size) + "_results_throughput.pdf"
+        filename += str(db_size) + "_results_throughput." + self.format
 
         title = "Throughput as " + result_type + " per second - Summary"
         p.plot_lines_all(queries, threads, engines, values,
@@ -598,7 +605,7 @@ class EvalTool(object):
                           ylabel=result_type + "/s")
 
         filename  = self.plot_folder + "plot_conc_dbsize_"
-        filename += str(db_size) + "_mosaic_results_throughput.pdf"
+        filename += str(db_size) + "_mosaic_results_throughput." + self.format
 
         # title = "Throughput for " + db_size
         # title += " as number of concurrent clients increases"
@@ -642,7 +649,7 @@ class EvalTool(object):
         p = Plotting.Plotting()
 
         filename  = self.plot_folder
-        filename += "plot_th_" + str(n_threads) + "_results_throughput.pdf"
+        filename += "plot_th_" + str(n_threads) + "_results_throughput." + self.format
 
         title = "Throughput as " + result_type + " per second - Summary"
         p.plot_lines_all(queries, db_sizes, engines, values,
@@ -653,7 +660,7 @@ class EvalTool(object):
                           xticks=self.plot_n_res_throughput_xticks)
 
         filename  = self.plot_folder
-        filename += "plot_th_" + str(n_threads) + "_mosaic_results_throughput.pdf"
+        filename += "plot_th_" + str(n_threads) + "_mosaic_results_throughput." + self.format
 
         # title = "Throughput for different queries"
         p.plot_lines_all_mosaic(queries, db_sizes, engines, values,
@@ -694,7 +701,7 @@ class EvalTool(object):
         p = Plotting.Plotting()
 
         filename  = self.plot_folder
-        filename += "plot_th_" + str(n_threads) + "_queries_throughput.pdf"
+        filename += "plot_th_" + str(n_threads) + "_queries_throughput." + self.format
 
         title = "Query Throughput (q/s) Summary"
         p.plot_lines_all(queries, db_sizes, engines, values,
@@ -705,7 +712,7 @@ class EvalTool(object):
                           xticks=self.plot_query_throughput_xticks)
 
         filename  = self.plot_folder
-        filename += "plot_th_" + str(n_threads) + "_mosaic_query_throughput.pdf"
+        filename += "plot_th_" + str(n_threads) + "_mosaic_query_throughput." + self.format
 
         # title = "Query Throughput (q/s) for different queries"
         p.plot_lines_all_mosaic(queries, db_sizes, engines, values,
@@ -742,7 +749,7 @@ class EvalTool(object):
         p = Plotting.Plotting()
 
         filename  = self.plot_folder
-        filename += "plot_th_" + str(n_threads) + "_query_times.pdf"
+        filename += "plot_th_" + str(n_threads) + "_query_times." + self.format
 
         title = "Query Execution Time(s) Summary"
         p.plot_lines_all(queries, db_sizes, engines, values,
@@ -753,7 +760,7 @@ class EvalTool(object):
                           xticks=self.plot_query_time_xticks)
 
         filename  = self.plot_folder
-        filename += "plot_th_" + str(n_threads) + "_mosaic_query_times.pdf"
+        filename += "plot_th_" + str(n_threads) + "_mosaic_query_times." + self.format
 
         # title = "Query Execution Time(s) for different queries"
         p.plot_lines_all_mosaic(queries, db_sizes, engines, values,
@@ -791,7 +798,7 @@ class EvalTool(object):
         p = Plotting.Plotting()
 
         filename  = self.plot_folder
-        filename += "plot_th_" + str(n_threads) + "_n_results.pdf"
+        filename += "plot_th_" + str(n_threads) + "_n_results." + self.format
 
         title = "Returned Results Summary"
         p.plot_lines_all(queries, db_sizes, engines, values,
@@ -802,7 +809,7 @@ class EvalTool(object):
                           xticks=self.plot_n_res_xticks)
 
         filename  = self.plot_folder
-        filename += "plot_th_" + str(n_threads) + "_mosaic_n_results.pdf"
+        filename += "plot_th_" + str(n_threads) + "_mosaic_n_results." + self.format
 
         title = "Returned Results for different queries"
         p.plot_lines_all_mosaic(queries, db_sizes, engines, values,
@@ -817,6 +824,8 @@ class EvalTool(object):
 
     # Bar plot
     def plot_query_time_speedup(self, n_threads):
+
+        print("Bar plot")
 
         # Plot query times:
         db_sizes = self.get_unique("db_size")
@@ -863,7 +872,7 @@ class EvalTool(object):
 
             filename  = self.plot_folder
             filename += "plot_th_" + str(n_threads) + "_query_times_speedup_"
-            filename += s_engines[1] + ".pdf"
+            filename += s_engines[1] + "." + self.format
 
             title  = "Speedup of " + s_engines[0] + " over " + s_engines[1]
             title += " for all queries"

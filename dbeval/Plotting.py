@@ -60,7 +60,7 @@ class Plotting(object):
     def plot_lines_all(self, queries, db_sizes, engines, values,
                         log="y",
                         title="Query Time",
-                        filename="plot_unnamed.pdf",
+                        filename="plot_unnamed.png",
                         xlabel="Database Size",
                         ylabel="None",
                         xticks=True):
@@ -133,13 +133,13 @@ class Plotting(object):
                        ncol=len(engines),
                        shadow=True, fancybox=True)
 
-        plt.savefig(filename, format="pdf", bbox_inches='tight')
+        plt.savefig(filename, format="png", bbox_inches='tight')
         plt.close()
 
     def plot_lines_all_mosaic(self, queries, db_sizes, engines, values,
                         log="y",
                         title="",
-                        filename="plot_unnamed.pdf",
+                        filename="plot_unnamed.png",
                         xlabel="",
                         ylabel="",
                         xticks=True):
@@ -203,12 +203,12 @@ class Plotting(object):
             if i >= (n_queries - side):
                 plt.xlabel(xlabel, fontsize=12)
 
-        plt.savefig(filename, format="pdf", bbox_inches='tight')
+        plt.savefig(filename, format="png", bbox_inches='tight')
         plt.close()
 
     def plot_bars(self, queries, db_sizes, values,
                   title="Generic (but Awesome) Bar Plot",
-                  filename="plot_summary.pdf",
+                  filename="plot_summary.png",
                   xlabel="Database Size",
                   ylabel="Speedup ?",
                   log="none"):
@@ -274,5 +274,5 @@ class Plotting(object):
             plt.legend(ncol=7, shadow=True, fancybox=True,
                        fontsize=9.5, loc="upper left")
 
-        plt.savefig(filename, format="pdf", bbox_inches='tight')
+        plt.savefig(filename, format="png", bbox_inches='tight')
         plt.close()
