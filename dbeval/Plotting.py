@@ -96,6 +96,7 @@ class Plotting(object):
 
         x_pos = [self.value_to_float(i) for i in db_sizes]
 
+
         for j in range(len(engines)):
             for i in range(n_queries):
                 ax0.errorbar(x_pos,
@@ -107,11 +108,11 @@ class Plotting(object):
                              marker=markers[j%len(markers)],
                              )
 
+        ax0.set_ylim(values.min()*0.9, values.max()*1.1)
         if log == "x" or log == "both":
             ax0.set_xscale('log')
         if log == "y" or log == "both":
             ax0.set_yscale('log')
-        # ax0.set_ylim(1,10**4)
 
         if xticks:
             plt.xticks(x_pos, db_sizes)
@@ -185,11 +186,11 @@ class Plotting(object):
                              marker=markers[j % len(markers)],
                              )
 
+            ax0.set_ylim(values.min()*0.9, values.max()*1.1)
             if log == "x" or log == "both":
                 ax0.set_xscale('log')
             if log == "y" or log == "both":
                 ax0.set_yscale('log')
-            # ax0.set_ylim(1,10**4)
 
             if xticks:
                 plt.xticks(x_pos, db_sizes, fontsize=10)

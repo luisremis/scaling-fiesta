@@ -282,8 +282,8 @@ class EvalTool(object):
     def get_arr_for_eng_q_dbsize(self, engine, query, db_size, key):
 
         arr = self.data[self.data["query"] == query]
-        arr = arr[self.data["engine"]      == engine]
-        arr = arr[self.data["db_size"]     == db_size]
+        arr = arr.loc[self.data["engine"]      == engine]
+        arr = arr.loc[self.data["db_size"]     == db_size]
         arr = arr[key].to_numpy()
 
         return arr
@@ -291,8 +291,8 @@ class EvalTool(object):
     def get_arr_for_eng_q_threads(self, engine, query, threads, key):
 
         arr = self.data[self.data["query"] == query]
-        arr = arr[self.data["engine"]      == engine]
-        arr = arr[self.data["n_threads"]   == threads]
+        arr = arr.loc[self.data["engine"]      == engine]
+        arr = arr.loc[self.data["n_threads"]   == threads]
         arr = arr[key].to_numpy()
 
         return arr
@@ -300,8 +300,8 @@ class EvalTool(object):
     def get_arr_for_eng_q_threads(self, engine, query, threads, key):
 
         arr = self.data[self.data["query"] == query]
-        arr = arr[self.data["engine"]      == engine]
-        arr = arr[self.data["n_threads"]   == threads]
+        arr = arr.loc[self.data["engine"]      == engine]
+        arr = arr.loc[self.data["n_threads"]   == threads]
         arr = arr[key].to_numpy()
 
         return arr

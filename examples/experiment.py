@@ -25,7 +25,7 @@ for th in threads:
                      th,
                      10,
                      0.0023 * query_offset * eng_offset / db_size_offset,
-                     0.0003 * query_offset * eng_offset,
+                     0.0023 * query_offset * eng_offset / db_size_offset * 0.4,
                      40 * db_size_offset,
                      4,
                      )
