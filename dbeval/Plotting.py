@@ -108,7 +108,9 @@ class Plotting(object):
                              marker=markers[j%len(markers)],
                              )
 
-        ax0.set_ylim(values.min()*0.9, values.max()*1.1)
+        if values.min() > 0.00001 and values.max() > 0:
+            ax0.set_ylim(values.min()*0.9, values.max()*1.1)
+
         if log == "x" or log == "both":
             ax0.set_xscale('log')
         if log == "y" or log == "both":
@@ -186,7 +188,9 @@ class Plotting(object):
                              marker=markers[j % len(markers)],
                              )
 
-            ax0.set_ylim(values.min()*0.9, values.max()*1.1)
+            if values.min() > 0.00001 and values.max() > 0:
+                ax0.set_ylim(values.min()*0.9, values.max()*1.1)
+
             if log == "x" or log == "both":
                 ax0.set_xscale('log')
             if log == "y" or log == "both":
